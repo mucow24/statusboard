@@ -27,9 +27,13 @@ def processHourlyData(hourly_data, units="english"):
     temps.append(int(ent['temp'][units]))
     winds.append(int(ent['wspd'][units]))
     pops.append(int(ent['pop']))
-    time = "%s %s:%s" % (ent['FCTTIME']['weekday_name_abbrev'],
-                         ent['FCTTIME']['hour'],
-                         ent['FCTTIME']['min'])
+    if ent['FCTTIME']['hour'] == '12':
+      time = "%s %s:%s" % (ent['FCTTIME']['weekday_name_abbrev'],
+                           ent['FCTTIME']['hour'],
+                           ent['FCTTIME']['min'])
+    else:
+      time = ""
+
     # time = int(ent['FCTTIME']['epoch'])
     times.append(time)
     # if ent['FCTTIME']['hour'] == "0":
