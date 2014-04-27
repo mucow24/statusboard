@@ -54,7 +54,7 @@ def processHourlyData(hourly_data, units="english"):
 def makeStatusBoard(processed_hourly_data):
   g = statusboard.Graph("Wunderground Forecast")
   g.setLimits(ymin = 0, ymax = 100)
-  temp   = statusboard.DataSequence("Temp (ºF)")
+  temp   = statusboard.DataSequence("Temp (F)")
   precip = statusboard.DataSequence("Precip (%)")
   wind   = statusboard.DataSequence("Wind (mph)")
   temp.color   = statusboard.DataSequence.Color.RED
@@ -68,4 +68,5 @@ def makeStatusBoard(processed_hourly_data):
   g.addDatasequence(temp)
   g.addDatasequence(precip)
   g.addDatasequence(wind)
+  g.refresh = 15
   return json.dumps(g.render(), indent=2)

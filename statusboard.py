@@ -22,6 +22,13 @@ class Graph(object):
     self._showY    = True
 
   @property
+  def refresh(self):
+    return self._refresh
+
+  @refresh.setter
+  def refresh(self, interval):
+    self._refresh = interval
+  @property
   def title(self):
     return self._title
 
@@ -93,6 +100,7 @@ class Graph(object):
     graph['type']  = self.graphType
     graph['yAxis'] = {'scaleTo' : self.scaleTo,
                       'hide'    : not self._showY }
+    graph['refreshEveryNSeconds'] = self._refresh
     if self._ymin:
       graph['yAxis']['minValue'] = self._ymin
     if self._ymax:
