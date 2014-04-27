@@ -92,7 +92,7 @@ class Graph(object):
     graph['total'] = self.showTotals
     graph['type']  = self.graphType
     graph['yAxis'] = {'scaleTo' : self.scaleTo,
-                      'hide'    : self._showY }
+                      'hide'    : not self._showY }
     if self._ymin:
       graph['yAxis']['minValue'] = self._ymin
     if self._ymax:
@@ -104,26 +104,24 @@ class Graph(object):
           graph['yAxis']['units']['prefix'] = self._prefix
         if self._suffix:
           graph['yAxis']['units']['suffix'] = self._suffix
-    graph['xAxis'] = {'hide' : self._showX}
+    graph['xAxis'] = {'hide' : not self._showX}
     graph['datasequences'] = []
     for ds in self._datasequences:
       graph['datasequences'].append(ds.render())
-
     return ret
-
     
 class DataSequence(object):
-  Colors     = enum(RED="red", 
-                    BLUE="blue",
-                    GREEN="green",
-                    YELLOW="yellow",
-                    ORANGE="orange",
-                    PURPLE="purple",
-                    AQUA="aqua",
-                    PINK="pink")
+  Color     = enum(RED="red", 
+                   BLUE="blue",
+                   GREEN="green",
+                   YELLOW="yellow",
+                   ORANGE="orange",
+                   PURPLE="purple",
+                   AQUA="aqua",
+                   PINK="pink")
   def __init__(self, title=""):
     self._title      = title
-    self._color      = DataSequence.Colors.RED 
+    self._color      = DataSequence.Color.RED 
     self._datapoints = []
 
   @property
@@ -133,6 +131,14 @@ class DataSequence(object):
   @title.setter
   def title(self, title):
     self._title = title
+  
+  @property
+  def color(self):
+    return self._color
+  
+  @color.setter
+  def color(self, color):
+    self._color = color
 
   def addDatapoint(self, name, value):
     self._datapoints.append((name, value))
@@ -147,5 +153,5 @@ class DataSequence(object):
     ret['color'] = self.color
     ret['datapoints'] = []
     for name, value in self.datapoints:
-      ret['datapoints'].append( {'name' : name, 'value' : value} )
+      ret['datapoints'].append( {'title' : name, 'value' : value} )
     return ret
