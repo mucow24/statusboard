@@ -21,11 +21,11 @@ def makeRainPlot(data):
   graph['type']  = "line"
   graph['yAxis'] = { 'minValue' : 0, 'maxValue' : 0.5 }
   graph['datasequences'] = []
+  graph['refreshEveryNSeconds'] = 15
   dataseq = graph['datasequences']
   dataseq.append({})
   seq = dataseq[0]
   seq['title'] = "Rain (in/hr)"
-  seq['refreshEveryNSeconds'] = 15
   seq['color'] = 'aqua'
   seq['datapoints'] = []
   for e in data['minutely']['data']:
