@@ -23,16 +23,26 @@ def processHourlyData(hourly_data, units="english"):
   pops  = ret['pops']
   times = ret['times']
 
+  day_count = 0
+  ctr = 0
   for ent in data:
     temps.append(int(ent['temp'][units]))
     winds.append(int(ent['wspd'][units]))
     pops.append(int(ent['pop']))
-    if ent['FCTTIME']['hour'] == '12':
-      time = "%s %s:%s" % (ent['FCTTIME']['weekday_name_abbrev'],
-                           ent['FCTTIME']['hour'],
-                           ent['FCTTIME']['min'])
-    else:
-      time = ""
+    hour = int(ent['FCTTIME']['hour'])
+    if hour > 12:
+      hour = hour - 12
+    elif hour == 0:
+      hour = 12
+
+    if ent['FCTTIME']['hour'] == '0':
+      day_count = day_count + 1
+    if day_count == 4:
+      break
+
+    time = "%s   %s%s   " % (ent['FCTTIME']['weekday_name_abbrev'],
+                        hour,
+                        ent['FCTTIME']['ampm'])
 
     # time = int(ent['FCTTIME']['epoch'])
     times.append(time)
