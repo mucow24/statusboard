@@ -5,11 +5,17 @@ import time
 import math
 
 def getData(key):
-  fetch_url = "http://datamine.mta.info/mta_esi.php?key=%s" % key
-  data = gtfs_realtime_pb2.FeedMessage()
-  u = urllib2.urlopen(fetch_url)
-  data.ParseFromString(u.read())
-  return data
+  Max_Tries = 10
+  for i in range(Max_Tries):
+    try:
+      fetch_url = "http://datamine.mta.info/mta_esi.php?key=%s" % key
+      data = gtfs_realtime_pb2.FeedMessage()
+      u = urllib2.urlopen(fetch_url)
+      data.ParseFromString(u.read())
+      return data
+    except:
+      print "Retrying... sleep %s sec" % i
+      time.sleep(i)
 
 class Stop:
   def __init__(self, name, stop_ids):
@@ -80,7 +86,7 @@ def loadStops(stops_filename):
       map[stop_id] = name
   return map
 
-def makeStops(data):
+def makeStops(data, stop_data):
   stop_map = {} 
   for e in data.entity:
     if e.trip_update.IsInitialized():
@@ -94,15 +100,12 @@ def makeStops(data):
           track = s.Extensions[txt_pb2.nyct_stop_time_update].scheduled_track
 
         stop_id = s.stop_id
-        if 'N' in stop_id:
-          stop_id = stop_id[:-1]
-        elif 'S' in stop_id:
-          stop_id = stop_id[:-1]
+        stop_name = stop_data[stop_id]
 
-        if stop_id not in stop_map:
-          stop_map[stop_id] = Stop(stop_id, [stop_id])
+        if stop_name not in stop_map:
+          stop_map[stop_name] = Stop(stop_name, [stop_name])
 
-        stop_map[stop_id].addArrival(Arrival(route_id, track, s.arrival.time))
+        stop_map[stop_name].addArrival(Arrival(route_id, track, s.arrival.time))
 
   return stop_map
 

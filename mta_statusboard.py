@@ -16,13 +16,13 @@ def main(argv):
 
   while True:
     d = mta.getData(key)
-    d = mta.makeStops(d)
     sd = mta.loadStops(stops_file)
+    d = mta.makeStops(d, sd)
     f = open(output_file, 'w')
     f.write("50%,50%\n")
     for s in stations:
       arr = mta.pruneArrivals(d[s])
-      name = sd[s]
+      name = d[s].name
       uptown = []
       downtown = []
       for track in arr:
@@ -30,22 +30,21 @@ def main(argv):
           if i >= Max_Arrivals:
             break
           if track == '1' or track == '2':
-            uptown.append(int(arrival.arrivalMin()))
+            uptown.append((arrival.route_id, int(arrival.arrivalMin())))
           else:
-            downtown.append(int(arrival.arrivalMin()))
+            downtown.append((arrival.route_id, int(arrival.arrivalMin())))
       uptown.sort()
       downtown.sort()
       f.write("%s [Uptown]," % name)
-      f.write("\"%s min" % uptown[0])
-      for a in uptown[1:]:
-        f.write(", %s min" % a)
+      f.write("\"%s - %s min" % (uptown[0][0], uptown[0][1]))
+      for r, t in uptown[1:]:
+        f.write(", %s - %s min" % (r, t))
       f.write("\"\n")
       f.write("%s [downtown]," % name)
-      f.write("\"%s min" % downtown[0])
-      for a in downtown[1:]:
-        f.write(", %s min" % a)
+      f.write("\"%s - %s min" % (downtown[0][0], downtown[0][1]))
+      for r, t in downtown[1:]:
+        f.write(", %s - %s min" % (r, t))
       f.write("\"\n")
-    print "done"
     time.sleep(30)
 
 if __name__ == "__main__":
