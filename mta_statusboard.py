@@ -108,13 +108,12 @@ def main(argv):
       uptown.sort()
       downtown.sort()
       f.write("  <tr>\n")
-      f.write("    <td> %s </td>\n" % name)
-      
+      f.write("    <td> %s Up</td>\n" % name)
       for t, r in uptown:
         color = mta.routeToColor(r)
         f.write("    <td style='width:150px'>\n")
         f.write("      <div class='circle' style='background:%s'>\n" % color)
-        f.write("        %s Up\n" % r)
+        f.write("        %s\n" % r)
         f.write("      </div>\n")
         if t > 0:
           f.write("      %s min\n" % t)
