@@ -3,19 +3,26 @@ import gtfs_realtime_pb2
 import urllib2
 import time
 import math
+import logging
 
 def getData(key):
-  Max_Tries = 10
+  Max_Tries = 20
+  failed = False
   for i in range(Max_Tries):
     try:
       fetch_url = "http://datamine.mta.info/mta_esi.php?key=%s" % key
+      logging.debug("Updating data: url: %s" % fetch_url)
       data = gtfs_realtime_pb2.FeedMessage()
       u = urllib2.urlopen(fetch_url)
       data.ParseFromString(u.read())
+      if failed:
+        logging.warn("Update successful.")
       return data
-    except:
-      print "Retrying... sleep %s sec" % i
-      time.sleep(i)
+    except Exception as e:
+      sleep_time = 2 * i
+      logging.warn("Update failed: %s" % e)
+      logging.debug("sleeping %s seconds." % sleep_time)
+      time.sleep(sleep_time)
 
 class Stop:
   def __init__(self, name, stop_ids):
@@ -100,14 +107,29 @@ def makeStops(data, stop_data):
           track = s.Extensions[txt_pb2.nyct_stop_time_update].scheduled_track
 
         stop_id = s.stop_id
+        if 'N' in stop_id:
+          stop_id = stop_id[:-1]
+        elif 'S' in stop_id:
+          stop_id = stop_id[:-1]
+
         stop_name = stop_data[stop_id]
 
-        if stop_name not in stop_map:
-          stop_map[stop_name] = Stop(stop_name, [stop_name])
+        if stop_id not in stop_map:
+          stop_map[stop_id] = Stop(stop_name, [stop_name])
 
-        stop_map[stop_name].addArrival(Arrival(route_id, track, s.arrival.time))
+        stop_map[stop_id].addArrival(Arrival(route_id, track, s.arrival.time))
 
   return stop_map
+
+def routeToColor(route):
+  if route in ('1', '2', '3'):
+    return "#EE352E"
+  elif route in ('4', '5', '6'):
+    return "#00933C"
+  elif route is '7':
+    return "#B933AD"
+  else:
+    return "#808183"
 
 def pruneArrivals(stop):
   valid_arrivals = {}
