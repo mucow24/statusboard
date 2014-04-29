@@ -45,8 +45,8 @@ def main(argv):
   update_interval = None
   log_level = None
   try:
-    if config.has_option('config', 'logfile'):
-      logfile = config.get('config', 'logfile')
+    if config.has_option('config', 'log_file'):
+      logfile = config.get('config', 'log_file')
 
     log_level = config.get('config', 'log_level')
     if log_level == "DEBUG":
