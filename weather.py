@@ -4,18 +4,75 @@ import json
 import time
 import sys
 import os
+import ConfigParser 
+import logging
 
 Darksky_Lat = 40.697017
 Darksky_Lon = -73.995267
 
-def log(string):
-  print "%s: %s" % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), string)
 
 def main(argv):
-  output_file = os.path.expanduser(argv[1])
-  ds_key = argv[2]
-  wund_key = argv[3]
+  if len(argv) != 2 or argv[1] == '-h' or argv[1] == '--help':
+    print "Usage: %s ini_file" % argv[0]
+    sys.exit(1)
+  ini_file = argv[1]
 
+  Defaults = {'update_interval_s' : '120',
+              'log_level'         : 'INFO',
+              'latitude'          : Darksky_Lat,
+              'longitude'         : Darksky_Lon,
+              'zip'               : '11201',
+              'cycle_interval_s'  : '15'}
+  config = ConfigParser.SafeConfigParser(Defaults)
+  config.read(ini_file)
+
+  output_file = None
+  log_file = None
+  ds_key = None
+  ds_refresh_s = None
+  
+  wu_refresh_s = None
+  wu_key = None
+  wu_zip = None
+  
+  cycle_s      = None
+  try:
+    if config.has_option('general', 'log_file'):
+      log_file = config.get('general', 'log_file')
+    
+    log_level = config.get('general', 'log_level')
+    if log_level == "DEBUG":
+      log_level = logging.DEBUG
+    elif log_level == "INFO":
+      log_level = logging.INFO
+    elif log_level == "WARNING":
+      log_level = logging.WARNING
+    elif log_level == "ERROR":
+      log_level = logging.ERROR
+    elif log_level == "CRITICAL":
+      log_level = logging.CRITICAL
+    else:
+      print "Invalid log level: %s" % log_level
+      print "Valid options are DEBUG, INFO, WARNING, ERROR, or CRITICAL"
+      sys.exit(1)
+
+    ds_refresh_s = config.getint('darksky', 'update_interval_s')
+    ds_key       = config.get('darksky', 'api_key')
+    wu_refresh_s = config.getint('wunderground', 'update_interval_s')
+    wu_key       = config.get('wunderground', 'api_key')
+    cycle_s      = config.getint('general', 'graph_cycle_s')
+    
+    output_file = os.path.expanduser(config.get('general', 'output_file'))
+  except Exception as e:
+    print "Error parsing  file: %s" % e
+    sys.exit(1) 
+  
+  log_format = "%(asctime)s %(levelname)s %(message)s"
+  if log_file:
+    logging.basicConfig(filename=log_file, level=log_level, format=log_format)
+  else:
+    logging.basicConfig(level=log_level, format=log_format)
+    
   first = True
   last_ts = 0
   ctr = 0
@@ -26,31 +83,31 @@ def main(argv):
       time.sleep(1)
       continue
 
-    if first or (ts % 120 == 0):
+    if first or (ts % ds_refresh_s == 0):
       # Update dark sky:
-      log("updating ds")
+      logging.debug("updating ds")
       d = darksky.getWeather(key = ds_key)
       p = darksky.makeRainPlot(d)
       ds_json = json.dumps(p, indent = 2)
       last_ts = ts
 
-    if first or (ts % 600 == 0):
-      log("updating wu")
+    if first or (ts % wu_refresh_s == 0):
+      logging.debug("updating wu")
       # Update wunderground
-      d = wunderground.getHourlyData(wund_key, 11201)
+      d = wunderground.getHourlyData(wu_key, wu_zip)
       p = wunderground.processHourlyData(d)
       wu_json = wunderground.makeStatusBoard(p)
       last_ts = ts
 
     # Cycle plot data:
-    if first or (ts % 30 == 0):
+    if first or (ts % cycle_s == 0):
       last_ts = ts
       f = open(output_file, 'w')
       if ctr % 2:
-        log("wrote ds")
+        logging.debug("wrote ds")
         f.write(ds_json)
       else:
-        log("wrote wu")
+        logging.debug("wrote wu")
         f.write(wu_json)
       f.close()
       ctr = ctr + 1
