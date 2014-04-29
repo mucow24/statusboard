@@ -138,6 +138,7 @@ def main(argv):
         f.write("    </td>\n")
       f.write("  </tr>\n")
     f.write("</table>\n")
+    f.close()
     logging.debug("done")
     time.sleep(update_interval_s)
 
