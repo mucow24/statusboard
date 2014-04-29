@@ -137,6 +137,7 @@ def main(argv):
           f.write("      DUE\n")
         f.write("    </td>\n")
       f.write("  </tr>\n")
+    f.write("</table>\n")
     logging.debug("done")
     time.sleep(update_interval_s)
 
