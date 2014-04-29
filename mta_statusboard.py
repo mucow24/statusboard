@@ -71,7 +71,7 @@ def main(argv):
     mta_key      = config.get('mta', 'api_key')
     num_arrivals = config.getint('mta', 'num_arrivals')
     stations     = config.get('mta', 'stations').split(',')
-    stops_file   = config.get('mta', 'stops_file')
+    stops_file   = os.path.expanduser(config.get('mta', 'stops_file'))
     update_interval_s = config.getint('mta', 'update_interval_s') 
   except Exception as e:
     print "Error parsing  file: %s" % e
