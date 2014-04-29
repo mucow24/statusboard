@@ -74,10 +74,11 @@ def main(argv):
     print "Error parsing config file: %s" % e
     sys.exit(1) 
   
+  log_format = "%(asctime)s %(levelname)s %(message)s"
   if logfile:
-    logging.basicConfig(filename = logfile)
-  
-  logging.basicConfig(level = log_level, format="%(asctime)s %(levelname)s %(message)s")
+    logging.basicConfig(filename=logfile, level=log_level, format=log_format)
+  else:
+    logging.basicConfig(level=log_level, format=log_format)
 
   try:
     f = open(output_file, 'w')
