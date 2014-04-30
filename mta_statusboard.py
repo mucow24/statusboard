@@ -132,7 +132,9 @@ def main(argv):
 
   while True:
     if ugcs_refresh_s:
-      if last_token_update_time > ugcs_refresh_s:
+      now = time.time()
+      since = now - last_token_update_time
+      if since > ugcs_refresh_s:
         logging.info("Updating UGCS tokens")
         if os.system('kinit -R && aklog') != 0:
           logging.critical("UGCS token update failed!")
