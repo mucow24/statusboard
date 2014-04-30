@@ -20,7 +20,7 @@ class TokenManager:
       return 1
 
     if time.time() - self.last_update > self.update_interval_s:
-      return updateTokens()
+      return self.updateTokens()
     else:
       return 0
 
