@@ -23,6 +23,7 @@ def main(argv):
               'longitude'         : Darksky_Lon,
               'zip'               : '11201',
               'cycle_interval_s'  : '15'}
+              'ugcs_refresh_s'    : '0'}
   config = ConfigParser.SafeConfigParser(Defaults)
   config.read(ini_file)
 
@@ -61,6 +62,7 @@ def main(argv):
     wu_refresh_s = config.getint('wunderground', 'update_interval_s')
     wu_key       = config.get('wunderground', 'api_key')
     cycle_s      = config.getint('general', 'graph_cycle_s')
+    ugcs_refresh_s = config.getint('general', 'ugcs_refresh_s')
     
     output_file = os.path.expanduser(config.get('general', 'output_file'))
   except Exception as e:
@@ -113,6 +115,12 @@ def main(argv):
       ctr = ctr + 1
     first = False
     time.sleep(1)
+
+  # UGCS Specific -- update tokens:
+  if (ugcs_refresh_s):
+    if (ts % ugcs_refresh_s == 0 or first):
+      logging.info("Updating UGCS tokens")
+      os.system('kinit -R && aklog')
 
 if __name__ == "__main__":
   main(sys.argv)
