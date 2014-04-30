@@ -74,6 +74,7 @@ def main(argv):
 
   Defaults = {'update_interval_s' : '60',
               'log_level'         : 'INFO',
+               'ugcs_refresh_s'   : '0'}
               'num_arrivals'      : '3'}
 
   config = ConfigParser.SafeConfigParser(Defaults)
@@ -85,6 +86,7 @@ def main(argv):
   num_arrivals = None
   station_list = None 
   log_file = None
+  ugcs_refresh_s = None
   try:
     if config.has_option('general', 'log_file'):
       log_file = config.get('general', 'log_file')
@@ -110,7 +112,8 @@ def main(argv):
     num_arrivals = config.getint('mta', 'num_arrivals')
     stations     = config.get('mta', 'stations').split(',')
     stops_file   = os.path.expanduser(config.get('mta', 'stops_file'))
-    update_interval_s = config.getint('mta', 'update_interval_s') 
+    update_interval_s = config.getint('mta',     'update_interval_s') 
+    ugcs_refresh_s    = config.getint('general', 'ugcs_refresh_s')
   except Exception as e:
     print "Error parsing  file: %s" % e
     sys.exit(1) 
@@ -121,7 +124,19 @@ def main(argv):
   else:
     logging.basicConfig(level=log_level, format=log_format)
 
+  last_token_update_time = time.time()
+  if ugcs_refresh_s:
+    logging.info("Updating UGCS tokens")
+    if os.system('kinit -R && aklog') != 0:
+      logging.critical("UGCS token update failed!")
+
   while True:
+    if ugcs_refresh_s:
+      if last_token_update_time > ugcs_refresh_s:
+        logging.info("Updating UGCS tokens")
+        if os.system('kinit -R && aklog') != 0:
+          logging.critical("UGCS token update failed!")
+
     logging.debug("updating data...")
     d = mta.getData(mta_key)
     sd = mta.loadStops(stops_file)
