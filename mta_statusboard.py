@@ -74,7 +74,7 @@ def main(argv):
 
   Defaults = {'update_interval_s' : '60',
               'log_level'         : 'INFO',
-               'ugcs_refresh_s'   : '0'}
+              'ugcs_refresh_s'    : '0',
               'num_arrivals'      : '3'}
 
   config = ConfigParser.SafeConfigParser(Defaults)
