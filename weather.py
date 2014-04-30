@@ -116,14 +116,6 @@ def main(argv):
         f.write(wu_json)
       f.close()
       ctr = ctr + 1
-
-    # UGCS Specific -- update tokens:
-    if ugcs_refresh_s:
-      if (ts % ugcs_refresh_s == 0 or first):
-        logging.info("Updating UGCS tokens")
-        ret = os.system('kinit -R && aklog')
-        if ret != 0:
-          logging.error("UGCS token update failed!")
     
     first = False
     time.sleep(1)
