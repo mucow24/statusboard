@@ -4,6 +4,7 @@ import os
 import time
 import ConfigParser 
 import logging
+import tokenmanager
 
 
 Style_Header = '''
@@ -36,7 +37,8 @@ def main(argv):
   ini_file = argv[1]
 
   Defaults = {'update_interval_s' : '120',
-              'log_level'         : 'INFO'}
+              'log_level'         : 'INFO',
+              'ugcs_refresh_s'    : '-1'}
   config = ConfigParser.SafeConfigParser(Defaults)
   config.read(ini_file)
 
@@ -44,6 +46,7 @@ def main(argv):
   stations = []
   update_interval = None
   log_level = None
+  ugcs_refresh_s = None
   try:
     if config.has_option('config', 'log_file'):
       logfile = config.get('config', 'log_file')
@@ -70,6 +73,7 @@ def main(argv):
     stations = map(int, stations.split(','))
     
     output_file = os.path.expanduser(config.get('config', 'output_file'))
+    ugcs_refresh_s    = config.getint('general', 'ugcs_refresh_s')
   except Exception as e:
     print "Error parsing config file: %s" % e
     sys.exit(1) 
@@ -101,7 +105,9 @@ def main(argv):
   logging.info("Citibike StatusBoard Daemon Starting")
   logging.info("Update Interval: %s seconds" % update_interval)
 
+  tm = tokenmanager.TokenManager(ugcs_refresh_s)
   while True:
+    tm.updateTokensIfNecessary()
     logging.debug("Updating All Stations...")
     f = open(output_file, 'w')
     try:
