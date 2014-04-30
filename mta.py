@@ -6,7 +6,7 @@ import math
 import logging
 
 def getData(key):
-  Max_Tries = 20
+  Max_Tries = 30
   failed = False
   for i in range(Max_Tries):
     try:
@@ -19,7 +19,7 @@ def getData(key):
         logging.warn("Update successful.")
       return data
     except Exception as e:
-      sleep_time = 2 * i
+      sleep_time = 5 
       logging.warn("Update failed: %s" % e)
       logging.debug("sleeping %s seconds." % sleep_time)
       time.sleep(sleep_time)

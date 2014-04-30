@@ -40,7 +40,7 @@ def processHourlyData(hourly_data, units="english"):
     if day_count == 4:
       break
 
-    time = "%s   %s%s   " % (ent['FCTTIME']['weekday_name_abbrev'],
+    time = "%s %s%s" % (ent['FCTTIME']['weekday_name_abbrev'],
                         hour,
                         ent['FCTTIME']['ampm'])
 
