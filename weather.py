@@ -114,14 +114,14 @@ def main(argv):
       f.close()
       ctr = ctr + 1
 
-  # UGCS Specific -- update tokens:
-  if ugcs_refresh_s:
-    if (ts % ugcs_refresh_s == 0 or first):
-      logging.info("Updating UGCS tokens")
-      os.system('kinit -R && aklog')
-  
-  first = False
-  time.sleep(1)
+    # UGCS Specific -- update tokens:
+    if ugcs_refresh_s:
+      if (ts % ugcs_refresh_s == 0 or first):
+        logging.info("Updating UGCS tokens")
+        os.system('kinit -R && aklog')
+    
+    first = False
+    time.sleep(1)
 
 if __name__ == "__main__":
   main(sys.argv)
