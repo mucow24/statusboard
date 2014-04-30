@@ -39,7 +39,7 @@ Script_Header = '''
         var estimate;
         if (delta < 0) {
           estimate = "GONE";
-        } else if (delta < 30) {
+        } else if (delta < 60) {
           estimate = "DUE";
         } else {
           estimate = (Math.floor(delta / 60)).toString() + " min";
