@@ -73,7 +73,7 @@ def main(argv):
     stations = map(int, stations.split(','))
     
     output_file = os.path.expanduser(config.get('config', 'output_file'))
-    ugcs_refresh_s    = config.getint('general', 'ugcs_refresh_s')
+    ugcs_refresh_s    = config.getint('config', 'ugcs_refresh_s')
   except Exception as e:
     print "Error parsing config file: %s" % e
     sys.exit(1) 
