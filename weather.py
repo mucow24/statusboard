@@ -6,6 +6,7 @@ import sys
 import os
 import ConfigParser 
 import logging
+import tokenmanager
 
 Darksky_Lat = 40.697017
 Darksky_Lon = -73.995267
@@ -23,7 +24,7 @@ def main(argv):
               'longitude'         : Darksky_Lon,
               'zip'               : '11201',
               'cycle_interval_s'  : '15',
-              'ugcs_refresh_s'    : '0'}
+              'ugcs_refresh_s'    : '-1'}
   config = ConfigParser.SafeConfigParser(Defaults)
   config.read(ini_file)
 
@@ -78,7 +79,9 @@ def main(argv):
   first = True
   last_ts = 0
   ctr = 0
+  tm = tokenmanager.TokenManager(ugcs_refresh_s)
   while True:
+    tm.updateTokensIfNecessary()
     ts = int(time.time())
      
     if ts == last_ts:

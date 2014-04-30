@@ -4,6 +4,7 @@ import os
 import time
 import ConfigParser
 import logging
+import tokenmanager
 
 Style_Header = '''
 <style>
@@ -74,7 +75,7 @@ def main(argv):
 
   Defaults = {'update_interval_s' : '60',
               'log_level'         : 'INFO',
-              'ugcs_refresh_s'    : '0',
+              'ugcs_refresh_s'    : '-1',
               'num_arrivals'      : '3'}
 
   config = ConfigParser.SafeConfigParser(Defaults)
@@ -124,20 +125,10 @@ def main(argv):
   else:
     logging.basicConfig(level=log_level, format=log_format)
 
-  last_token_update_time = time.time()
-  if ugcs_refresh_s:
-    logging.info("Updating UGCS tokens")
-    if os.system('kinit -R && aklog') != 0:
-      logging.critical("UGCS token update failed!")
+  tm = tokenmanager.TokenManager(ugcs_refresh_s)
 
   while True:
-    if ugcs_refresh_s:
-      now = time.time()
-      since = now - last_token_update_time
-      if since > ugcs_refresh_s:
-        logging.info("Updating UGCS tokens")
-        if os.system('kinit -R && aklog') != 0:
-          logging.critical("UGCS token update failed!")
+    tm.updateTokensIfNecessary()
 
     logging.debug("updating data...")
     d = mta.getData(mta_key)
