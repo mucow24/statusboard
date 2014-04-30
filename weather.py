@@ -22,7 +22,7 @@ def main(argv):
               'latitude'          : Darksky_Lat,
               'longitude'         : Darksky_Lon,
               'zip'               : '11201',
-              'cycle_interval_s'  : '15'}
+              'cycle_interval_s'  : '15',
               'ugcs_refresh_s'    : '0'}
   config = ConfigParser.SafeConfigParser(Defaults)
   config.read(ini_file)
@@ -117,7 +117,7 @@ def main(argv):
     time.sleep(1)
 
   # UGCS Specific -- update tokens:
-  if (ugcs_refresh_s):
+  if ugcs_refresh_s:
     if (ts % ugcs_refresh_s == 0 or first):
       logging.info("Updating UGCS tokens")
       os.system('kinit -R && aklog')
