@@ -5,6 +5,11 @@ import time
 import math
 import logging
 
+Uptown_Express_Track   = '1'
+Uptown_Local_Track     = '2'
+Downtown_Local_Track   = '3'
+Downtown_Express_Track = '4'
+
 def getData(key):
   Max_Tries = 30
   failed = False
@@ -145,7 +150,6 @@ def pruneArrivals(stop):
   return valid_arrivals
 
 def printArrivals(stop, num_to_print=5):
-  
   valid_arrivals = {}
   for track in stop.tracks:
     if track not in valid_arrivals:

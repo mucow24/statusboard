@@ -1,0 +1,261 @@
+
+<style>
+.circle {
+  width:  30px;
+  height: 30px;
+  border-radius: 15px;
+  line-height:   30px;
+  text-align:    center;
+  font-family: "Helvetica";
+  font-weight: bold;
+  font-size:   24px;
+  color:       white;
+  white-space: nowrap;
+  display:     inline-block;
+  vertical-align: text-top;
+  margin-right: 10px;
+}
+.pulse{
+  animation-name: pulse;
+  -webkit-animation-name: pulse;  
+
+  animation-duration: 1.5s; 
+  -webkit-animation-duration: 1.5s;
+
+  animation-iteration-count: infinite;
+  -webkit-animation-iteration-count: infinite;
+}
+
+@-webkit-keyframes pulse {
+  0% {
+    opacity: 1;   
+  }
+  50% {
+    opacity: 0.8; 
+  } 
+  100% {
+    opacity: 1; 
+  }     
+}
+
+@-webkit-keyframes slideInDown {
+  0% {
+    opacity: 0;
+    -webkit-transform: translateY(-2000px);
+    transform: translateY(-2000px);
+  }
+
+  100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}
+
+.slideInDown {
+  -webkit-animation-name: slideInDown;
+  -webkit-animation-duration: 1.5s;
+}
+
+html{background:transparent}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,textarea,select,p,blockquote,th,td{margin:0;padding:0}table{border-collapse:collapse;border-spacing:0}fieldset,img{border:0}address,button,caption,cite,code,dfn,mikekocurek@gmail.com,input,optgroup,option,select,strong,textarea,th,var{font:inherit}del,ins{text-decoration:none}li{list-style:none}caption,th{text-align:left}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}q:before,q:after{content:''}abbr,acronym{border:0;font-variant:normal}sup{vertical-align:baseline}sub{vertical-align:baseline}legend{color:#000}*{color: transparent}
+
+body {
+  background-repeat: repeat-x;
+  background: black;
+  color: white;
+}
+
+* {
+  pointer-events: none;
+  -webkit-user-select: none;
+  -webkit-user-modify: none;
+  -webkit-user-drag: none;
+}
+
+table {
+  border-collapse: separate;
+  table-layout:fixed;
+  font-family: "Roadgeek 2005 Series C";
+  text-transform: uppercase;
+  border-spacing: 4px;
+  line-height: 12px;
+  width: 100%;
+  -webkit-border-radius: 4px;
+}
+
+/* A single project box */
+tr {
+  height: 60px;
+}
+
+td, th {
+  max-height: 44px;
+  color: rgba(255,255,255,1);
+  padding: 10px 10px 6px 10px;
+  -webkit-border-radius: 5px;
+  background-image: -webkit-gradient(linear, left top, left bottom,
+  from(rgba(255,255,255,.05)),
+  color-stop(.5, rgba(255,255,255,.03)),
+  color-stop(.51, rgba(255,255,255,.15)),
+  to(rgba(255,255,255,.1))
+  );
+  -webkit-box-shadow: rgba(255,255,255,0) 0px 1px 0px, rgba(255,255,255,.18) 0px -1px 0px, inset 0 0 5px rgba(0,0,0,.35);
+  
+  text-shadow: black 0px 1px 0px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 2.3em;
+}
+
+td img 
+{
+  max-height: 44px;
+}
+
+th
+{
+  background-image: -webkit-linear-gradient(
+    rgba(255,255,255,.05),
+    rgba(255,255,255,.1)
+  );
+  text-align: center;
+  font-size: 1.5em;
+  line-height: 1.0em;
+  color: rgb(100,100,100);
+}
+</style>
+<script>
+
+  Data = null;
+
+  function updateData() {
+    var t = setTimeout( function () { updateData() }, 10000);
+    var req = new XMLHttpRequest();
+    req.overrideMimeType("application/json");
+
+    req.onreadystatechange = function() {
+      if (req.readyState == 4) { 
+        Data = JSON.parse(req.responseText);
+      }
+    }
+    req.open("GET", 'test.json', true);
+    req.send(null);
+  }
+
+  Initial_Request_Sent = false;
+  Table_Data = { 'station_rows' : [] };
+
+  function init() {
+    Num_Arrivals = 3;
+    if (!Initial_Request_Sent) {
+      console.log("initial req...");
+      updateData();
+      Initial_Request_Sent = true;
+    }
+    if (Data == null) {
+      console.log("waiting...");
+      var t = setTimeout( function () { init() }, 100);
+      return;
+    }
+      
+    var table = document.getElementById("arrTable");
+    if (Data == null) {
+      console.log('null');
+    }
+    if (table != null && Data != null) {
+      var n_stations = Data.stationUpdates.length;
+      for (var s = 0; s < n_stations; ++s) {
+        update = Data.stationUpdates[s];
+        var row = table.insertRow(-1);
+        var name_cell = row.insertCell(0);
+        Table_Data.station_rows[s] = { 'name_cell'     : name_cell,
+                                       'arrival_cells' : [] };
+
+        name_cell.innerHTML = update.stationName;
+        for (var a = 0; a < Num_Arrivals; ++a) {
+          var a_cell = row.insertCell(-1);
+          a_cell.style.width = "150px";
+          var cell_span = document.createElement('span');
+          cell_span.setAttribute('class', 'slideInDown');
+          var route_div = document.createElement('span');
+          route_div.setAttribute('class', 'circle');
+          route_div.style.background = 'black';
+          var arr_span = document.createElement('span');
+          arr_span.style.color = 'white';
+          a_cell.appendChild(cell_span);
+          cell_span.appendChild(route_div);
+          cell_span.appendChild(arr_span);
+          Table_Data.station_rows[s].arrival_cells[a] = { 'cell'         : a_cell,
+                                                          'cell_span'    : cell_span,
+                                                          'route_div'    : route_div,
+                                                          'arrival_span' : arr_span };
+        }
+      }
+    }
+    updateArrivals();
+  }
+
+  function updateArrivals() {
+    var table = document.getElementById("arrTable");
+    if (table == null) {
+      console.log("Table is null!?");
+      return;
+    }
+    var now = new Date();
+    now = Math.floor(now.getTime() / 1000);
+    for (var s = 0; s < table.rows.length; ++s) {
+      //var srow    = table.rows[s];
+      var srow    = Table_Data.station_rows[s];
+      var supdate = Data.stationUpdates[s];
+
+      // Find first arrival that's in the future:
+      var arr_index;
+      for (arr_index = 0; arr_index < supdate.stationArrivals.length; ++arr_index) {
+        if (supdate.stationArrivals[arr_index].arrivalTime > now) {
+          break;
+        }
+      }
+
+      for (var a_i in srow.arrival_cells) {
+        var arrival_cell = srow.arrival_cells[a_i]; 
+        if (arr_index < supdate.stationArrivals.length) {
+          var arrival = supdate.stationArrivals[arr_index];
+          var route = arrival.arrivalRoute;
+          var color = arrival.routeColor;
+          var time  = arrival.arrivalTime;
+          arrival_cell.route_div.innerHTML = route;
+          arrival_cell.route_div.style.background = color;
+          var time_delta = time - now;
+          var min_str;
+          if (time_delta < 60) {
+            //console.log("td:" + time_delta);
+            min_str = "DUE";
+          } else {
+            var minutes = Math.floor(time_delta / 60);
+            //console.log("min: " + minutes);
+            min_str = minutes + " min";
+          }
+          if (arrival_cell.arrival_span.innerHTML != min_str) { 
+            console.log("swap: " + arrival_cell.arrival_span.innerHTML + " -> " + min_str);
+            var temp = arrival_cell.cell_span.cloneNode(false);
+            while (arrival_cell.cell_span.hasChildNodes()) {
+                temp.appendChild(arrival_cell.cell_span.removeChild(arrival_cell.cell_span.firstChild))
+            }
+            var p    = arrival_cell.cell_span.parentNode;
+            arrival_cell.cell_span.parentNode.replaceChild(temp, arrival_cell.cell_span);
+            arrival_cell.cell_span = temp;
+            arrival_cell.arrival_span.innerHTML = min_str;
+          }
+          ++arr_index;
+        } else {
+          arrival_cell.arrival_span.innerHTML = "";
+          arrival_cell.route_div.innerHTML="";
+        }
+      }
+    }
+    var t = setTimeout( function () { updateArrivals() }, 500);
+  }
+  window.onload = init;
+</script>
+<table id="arrTable">
+</table>

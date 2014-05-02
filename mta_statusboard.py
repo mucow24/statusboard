@@ -1,71 +1,25 @@
-import mta
-import sys
-import os
-import time
 import ConfigParser
+import json
 import logging
+import os
+import sys
+import time
 import tokenmanager
 
-Style_Header = '''
-<style>
-.circle {
-  width:  30px;
-  height: 30px;
-  border-radius: 15px;
-  line-height:   30px;
-  text-align:    center;
-  font-family: "Helvetica";
-  font-weight: bold;
-  font-size:   24px;
-  white-space: nowrap;
-  display:     inline-block;
-  vertical-align: text-top;
-}
-</style>
-'''
+import mta
 
-Script_Header = '''
-<script>
-  function updateArrivals() {
-    var now = new Date();
-    now = Math.floor(now.getTime() / 1000);
-    update_delta = now - Last_Update;
-
-    for (var s = 0; s < arrival_times.length; ++s) {
-      var st_arrivals = arrival_times[s];
-      for (var a = 0; a < st_arrivals.length; ++a) {
-        var arrival_time = st_arrivals[a];
-        var delta = st_arrivals[a] - now;
-        var id = 'a' + s.toString() + a.toString();
-        var estimate;
-        if (delta < 0) {
-          estimate = "GONE";
-        } else if (delta < 60) {
-          estimate = "DUE";
-        } else {
-          estimate = (Math.floor(delta / 60)).toString() + " min";
-        }
-        var e = document.getElementById(id);
-        if (e != null) {
-          e.innerHTML = estimate;
-          if (update_delta > 120) {
-            e.style.color = 'red';
-          } else if (update_delta > 90) {
-            e.style.color = 'yellow';
-          }
-        }
-      }
-    }
-    var t = setTimeout( function () { updateArrivals() }, 500);
-  }
-  window.onload = updateArrivals()
-</script>
-'''
-
-
-
-def log(string):
-  print "%s: %s" % (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), string)
+def makeStationUpdate(name, direction, arrivals):
+  station_update = {}
+  station_update['stationName']      = name
+  station_update['stationDirection'] = direction
+  station_update['stationArrivals']  = []
+  station_arrivals = station_update['stationArrivals'] 
+  for t, r in arrivals:
+    station_arrivals.append({'arrivalTime'  : t,
+                             'arrivalRoute' : r,
+                             'routeColor'   : mta.routeToColor(r) })
+  print station_update
+  return station_update
 
 def main(argv):
   if len(argv) != 2 or argv[1] == '-h' or argv[1] == '--help':
@@ -134,94 +88,31 @@ def main(argv):
     d = mta.getData(mta_key)
     sd = mta.loadStops(stops_file)
     d = mta.makeStops(d, sd)
-    logging.debug("writing table...")
-    f = open(output_file, 'w')
-    f.write(Style_Header)
-    # Write out arrival timestamps:
-    f.write("<script>\n")
-    f.write("  Last_Update = %s;\n" % time.time())
-    f.write("  arrival_times = [\n");
+    logging.debug("writing json...")
+
+    output = {}
+    output['lastUpdateTime'] = time.time()
+    output['stationUpdates'] = []
+    station_updates = output['stationUpdates']
+
     for s in stations:
       arr = mta.pruneArrivals(d[s])
-      uptown   = []
-      downtown = []
-      for track in arr:
-        for i, arrival in enumerate(arr[track]):
-          if i >= num_arrivals:
-            break
-          if track == '1' or track == '2':
-            uptown.append( (arrival.timestamp, arrival.route_id) )
-          else:
-            downtown.append( (arrival.timestamp, arrival.route_id) )
-      uptown.sort()
-      downtown.sort()
-      f.write("    [")
-      for i in range(len(uptown)):
-        if i != 0:
-          f.write(", ")
-        f.write("%s" % uptown[i][0])
-      f.write("],\n")
-      f.write("    [")
-      for i in range(len(downtown)):
-        if i != 0:
-          f.write(", ")
-        f.write("%s" % downtown[i][0])
-      f.write("],\n")
-    f.write("  ];\n")
-    f.write("</script>\n")
-    
-    f.write(Script_Header)
-    f.write("<table>\n")
-    s_ctr = 0
-    for s in stations:
-      arr = mta.pruneArrivals(d[s])
-      name = d[s].name
       uptown = []
       downtown = []
       for track in arr:
         for i, arrival in enumerate(arr[track]):
           if i >= num_arrivals:
             break
-          if track == '1' or track == '2':
+          if track == mta.Uptown_Express_Track or track == mta.Uptown_Local_Track:
             uptown.append( (arrival.timestamp, arrival.route_id) )
           else:
             downtown.append( (arrival.timestamp, arrival.route_id) )
-      uptown.sort()
-      downtown.sort()
-      f.write("  <tr>\n")
-      f.write("    <td> %s Up</td>\n" % name)
-      a_ctr = 0
-      for t, r in uptown:
-        color = mta.routeToColor(r)
-        f.write("    <td style='width:150px'>\n")
-        f.write("      <div class='circle' style='background:%s'>\n" % color)
-        f.write("        %s\n" % r)
-        f.write("      </div>\n")
-        f.write("      <span id='a%s%s'></span>\n" % (s_ctr, a_ctr))
-        f.write("    </td>\n")
-        a_ctr = a_ctr + 1
-        if (a_ctr >= num_arrivals):
-          break
-      f.write("  </tr>\n")
+      station_updates.append(makeStationUpdate(d[s].name, 'Uptown',   uptown))
+      station_updates.append(makeStationUpdate(d[s].name, 'Downtown', downtown))
 
-      f.write("  <tr>\n")
-      f.write("    <td> %s Down</td>\n" % name)
-      a_ctr = 0
-      s_ctr = s_ctr + 1
-      for t, r in downtown:
-        color = mta.routeToColor(r)
-        f.write("    <td style='width:150px'>\n")
-        f.write("      <div class='circle' style='background:%s'>\n" % color)
-        f.write("        %s\n" % r)
-        f.write("      </div>\n")
-        f.write("      <span id='a%s%s'></span>\n" % (s_ctr, a_ctr))
-        f.write("    </td>\n")
-        a_ctr = a_ctr + 1
-        if (a_ctr >= num_arrivals):
-          break
-      f.write("  </tr>\n")
-      s_ctr = s_ctr + 1
-    f.write("</table>\n")
+
+    f = open(output_file, 'w')
+    f.write(json.dumps(output, indent=2))
     f.close()
     logging.debug("done")
     time.sleep(update_interval_s)
