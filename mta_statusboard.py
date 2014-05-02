@@ -200,6 +200,8 @@ def main(argv):
         f.write("      <span id='a%s%s'></span>\n" % (s_ctr, a_ctr))
         f.write("    </td>\n")
         a_ctr = a_ctr + 1
+        if (a_ctr >= num_arrivals):
+          break
       f.write("  </tr>\n")
 
       f.write("  <tr>\n")
@@ -215,6 +217,8 @@ def main(argv):
         f.write("      <span id='a%s%s'></span>\n" % (s_ctr, a_ctr))
         f.write("    </td>\n")
         a_ctr = a_ctr + 1
+        if (a_ctr >= num_arrivals):
+          break
       f.write("  </tr>\n")
       s_ctr = s_ctr + 1
     f.write("</table>\n")

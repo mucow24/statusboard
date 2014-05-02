@@ -62,6 +62,7 @@ def main(argv):
     ds_key       = config.get('darksky', 'api_key')
     wu_refresh_s = config.getint('wunderground', 'update_interval_s')
     wu_key       = config.get('wunderground', 'api_key')
+    wu_zip       = config.get('wunderground', 'zip')
     cycle_s      = config.getint('general', 'graph_cycle_s')
     ugcs_refresh_s = config.getint('general', 'ugcs_refresh_s')
     
