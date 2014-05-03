@@ -5,10 +5,10 @@ import time
 import math
 import logging
 
-Uptown_Express_Track   = '1'
-Uptown_Local_Track     = '2'
-Downtown_Local_Track   = '3'
-Downtown_Express_Track = '4'
+Uptown_Express_Track   = '4'
+Uptown_Local_Track     = '3'
+Downtown_Local_Track   = '2'
+Downtown_Express_Track = '1'
 
 def getData(key):
   Max_Tries = 30
