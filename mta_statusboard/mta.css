@@ -1,0 +1,262 @@
+.dir_cell {
+  width: 25px;
+  font-size: 20px;
+  vertical-align: middle;
+  padding-bottom:12px;
+}
+
+.arr_cell {
+  color: white;
+  padding-bottom: 0px;
+  -webkit-transition: color 2s;
+  transition: color 2s;
+}
+.arr_cell:hover {
+  color: blue;
+  padding-bottom: 0px;
+  -webkit-transition: color 2s;
+  transition: color 2s;
+}
+
+.circle {
+  width:  30px;
+  height: 30px;
+  border-radius: 15px;
+  line-height:   30px;
+  text-align:    center;
+  font-family: "Helvetica";
+  font-weight: bold;
+  font-size:   24px;
+  color:       white;
+  white-space: nowrap;
+  display:     inline-block;
+  vertical-align: text-top;
+  margin-right: 10px;
+}
+.pulse{
+  animation-name: pulse;
+  -webkit-animation-name: pulse;  
+
+  animation-duration: 1.5s; 
+  -webkit-animation-duration: 1.5s;
+
+  animation-iteration-count: infinite;
+  -webkit-animation-iteration-count: infinite;
+}
+
+@-webkit-keyframes pulse {
+  0% {
+    opacity: 1;   
+  }
+  50% {
+    opacity: 0.8; 
+  } 
+  100% {
+    opacity: 1; 
+  }     
+}
+
+@-webkit-keyframes slideOutDown {
+  0% {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    -webkit-transform: translateY(100%);
+    transform: translateY(200px);
+  }
+}
+
+.slideOutDown {
+  -webkit-animation-name: slideOutDown;
+  -webkit-animation-duration: 0.1s;
+}
+
+@-webkit-keyframes flipOutX {
+  0% {
+    -webkit-transform: perspective(400px) rotateX(0deg);
+    transform: perspective(400px) rotateX(0deg);
+    opacity: 1;
+  }
+
+  100% {
+    -webkit-transform: perspective(400px) rotateX(90deg);
+    transform: perspective(400px) rotateX(90deg);
+  }
+}
+
+@keyframes flipOutX {
+  0% {
+    -webkit-transform: perspective(400px) rotateX(0deg);
+    -ms-transform: perspective(400px) rotateX(0deg);
+    transform: perspective(400px) rotateX(0deg);
+    opacity: 1;
+  }
+
+  100% {
+    -webkit-transform: perspective(400px) rotateX(90deg);
+    -ms-transform: perspective(400px) rotateX(90deg);
+    transform: perspective(400px) rotateX(90deg);
+    opacity: 0;
+  }
+}
+
+.flipOutX {
+  -webkit-animation-duration: 0.2s;
+  -webkit-animation-name: flipOutX;
+  animation-name: flipOutX;
+  -webkit-backface-visibility: visible !important;
+  -ms-backface-visibility: visible !important;
+  backface-visibility: visible !important;
+}
+
+@-webkit-keyframes flipInX {
+  0% {
+    -webkit-transform: perspective(400px) rotateX(90deg);
+    transform: perspective(400px) rotateX(90deg);
+  }
+
+  40% {
+    -webkit-transform: perspective(400px) rotateX(-10deg);
+    transform: perspective(400px) rotateX(-10deg);
+  }
+
+  70% {
+    -webkit-transform: perspective(400px) rotateX(10deg);
+    transform: perspective(400px) rotateX(10deg);
+  }
+
+  100% {
+    -webkit-transform: perspective(400px) rotateX(0deg);
+    transform: perspective(400px) rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes flipInX {
+  0% {
+    -webkit-transform: perspective(400px) rotateX(90deg);
+    -ms-transform: perspective(400px) rotateX(90deg);
+    transform: perspective(400px) rotateX(90deg);
+    opacity: 0;
+  }
+
+  40% {
+    -webkit-transform: perspective(400px) rotateX(-10deg);
+    -ms-transform: perspective(400px) rotateX(-10deg);
+    transform: perspective(400px) rotateX(-10deg);
+  }
+
+  70% {
+    -webkit-transform: perspective(400px) rotateX(10deg);
+    -ms-transform: perspective(400px) rotateX(10deg);
+    transform: perspective(400px) rotateX(10deg);
+  }
+
+  100% {
+    -webkit-transform: perspective(400px) rotateX(0deg);
+    -ms-transform: perspective(400px) rotateX(0deg);
+    transform: perspective(400px) rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+.flipInX {
+  -webkit-animation-duration: 0.7s;
+  -webkit-backface-visibility: visible !important;
+  -ms-backface-visibility: visible !important;
+  backface-visibility: visible !important;
+  -webkit-animation-name: flipInX;
+  animation-name: flipInX;
+}
+
+
+@-webkit-keyframes slideInDown {
+  0% {
+    opacity: 0;
+    -webkit-transform: translateY(-200px);
+    transform: translateY(-200px);
+  }
+
+  100% {
+    opacity: 1;
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+}
+
+.slideInDown {
+  -webkit-animation-name: slideInDown;
+  -webkit-animation-duration: 0.1s;
+}
+
+html{background:transparent}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,textarea,select,p,blockquote,th,td{margin:0;padding:0}table{border-collapse:collapse;border-spacing:0}fieldset,img{border:0}address,button,caption,cite,code,dfn,mikekocurek@gmail.com,input,optgroup,option,select,strong,textarea,th,var{font:inherit}del,ins{text-decoration:none}li{list-style:none}caption,th{text-align:left}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}q:before,q:after{content:''}abbr,acronym{border:0;font-variant:normal}sup{vertical-align:baseline}sub{vertical-align:baseline}legend{color:#000}*{color: transparent}
+
+body {
+  background-repeat: repeat-x;
+  background: black;
+  color: white;
+}
+
+* {
+  pointer-events: none;
+  -webkit-user-select: none;
+  -webkit-user-modify: none;
+  -webkit-user-drag: none;
+}
+
+table {
+  border-collapse: separate;
+  table-layout:fixed;
+  font-family: "Roadgeek 2005 Series C";
+  text-transform: uppercase;
+  line-height: 12px;
+  width: 100%;
+  padding: 2px;
+}
+
+/* A single project box */
+tr {
+  height: 60px;
+}
+
+td, th {
+  max-height: 44px;
+  color: rgba(255,255,255,1);
+  padding: 10px 10px 6px 10px;
+  /* -webkit-border-radius: 5px; */
+  /*
+  background-image: -webkit-gradient(linear, left top, left bottom,
+  from(rgba(255,255,255,.05)),
+  color-stop(.5, rgba(255,255,255,.03)),
+  color-stop(.51, rgba(255,255,255,.15)),
+  to(rgba(255,255,255,.1))
+  );
+  */
+  -webkit-box-shadow: rgba(255,255,255,0) 0px 1px 0px, rgba(255,255,255,.18) 0px -1px 0px, inset 0 0 5px rgba(0,0,0,.35);
+  
+  text-shadow: black 0px 1px 0px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 2.3em;
+}
+td img 
+{
+  max-height: 44px;
+}
+
+th
+{
+  background-image: -webkit-linear-gradient(
+    rgba(255,255,255,.05),
+    rgba(255,255,255,.1)
+  );
+  text-align: center;
+  font-size: 1.5em;
+  line-height: 1.0em;
+  color: rgb(100,100,100);
+}
+*/
