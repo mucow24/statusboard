@@ -5,30 +5,7 @@ import time
 import ConfigParser 
 import logging
 import tokenmanager
-
-
-Style_Header = '''
-<style>
-img {
-  float:  right;
-  clear:  right;
-  height: 30px;
-  padding-left: 15px;
-}
-.bikes {
-  text-align:     right;
-  vertical-align: middle;
-  line-height:    30px;
-  width:          130px;
-}
-.docks {
-  text-align:     right;
-  vertical-align: middle;
-  line-height:    30px;
-  width:          130px;
-}
-</style>
-'''
+import json
 
 def main(argv):
   if len(argv) != 2 or argv[1] == '-h' or argv[1] == '--help':
@@ -112,8 +89,8 @@ def main(argv):
     f = open(output_file, 'w')
     try:
       d = citibike.getData()
-      f.write(Style_Header)
-      f.write("<table>\n")
+      ret = {'lastUpdateTime' : time.time() }
+      ret['stationData'] = []
       for station in stations:
         sd = d[station]
         bikes = sd['availableBikes']
@@ -121,17 +98,16 @@ def main(argv):
         name  = sd['stationName']
         name = name.replace(" & ", "/")
         name = name.replace(" St", "")
-        f.write("  <tr>\n")
-        f.write("    <td>%s</td>\n" % name)
-        f.write("    <td class='bikes'> %s <img src=\"bike.svg\"></td>\n" % bikes)
-        f.write("    <td class='docks''>%s <img src=\"dock.png\"></td>\n" % docks)
-        f.write("  </tr>\n")
-      f.write("</table>")
+        ret['stationData'].append(
+            { 'name'  : name,
+              'bikes' : bikes,
+              'docks' : docks
+            })
+      f.write(json.dumps(ret, indent=2))
       f.close()
     except Exception as e:
       logging.error("Exception: %s" % e)
-      f.write("100%\n")
-      f.write("\"%s\"" % e)
+      f.write("%s" % e)
       f.close()
     logging.debug("\tDone.")
     time.sleep(120)
