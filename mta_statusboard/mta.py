@@ -15,7 +15,7 @@ def getData(key):
   failed = False
   for i in range(Max_Tries):
     try:
-      fetch_url = "http://datamine.mta.info/mta_esi.php?key=%s" % key
+      fetch_url = "http://datamine.mta.info/mta_esi.php?key=%s&feed_id=1" % key
       logging.debug("Updating data: url: %s" % fetch_url)
       data = gtfs_realtime_pb2.FeedMessage()
       u = urllib2.urlopen(fetch_url)
