@@ -4,7 +4,6 @@ import os
 import time
 import ConfigParser 
 import logging
-import tokenmanager
 import json
 
 def main(argv):
@@ -82,9 +81,7 @@ def main(argv):
   logging.info("Citibike StatusBoard Daemon Starting")
   logging.info("Update Interval: %s seconds" % update_interval)
 
-  tm = tokenmanager.TokenManager(ugcs_refresh_s)
   while True:
-    tm.updateTokensIfNecessary()
     logging.debug("Updating All Stations...")
     f = open(output_file, 'w')
     try:

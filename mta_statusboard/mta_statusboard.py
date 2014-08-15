@@ -4,7 +4,6 @@ import logging
 import os
 import sys
 import time
-import tokenmanager
 
 import mta
 
@@ -79,11 +78,7 @@ def main(argv):
   else:
     logging.basicConfig(level=log_level, format=log_format)
 
-  tm = tokenmanager.TokenManager(ugcs_refresh_s)
-
   while True:
-    tm.updateTokensIfNecessary()
-
     logging.debug("updating data...")
     d = mta.getData(mta_key)
     sd = mta.loadStops(stops_file)
